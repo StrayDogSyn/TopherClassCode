@@ -1,0 +1,45 @@
+{
+  "coord": {
+    "lon": -122.2284,
+    "lat": 47.3073
+  },
+  "weather": [
+    {
+      "id": 801,
+      "main": "Clouds",
+      "description": "few clouds",
+      "icon": "02d"
+    }
+  ],
+  "base": "stations",
+  "main": {
+    "temp": 17.46,
+    "feels_like": 16.31,
+    "temp_min": 15.95,
+    "temp_max": 18.64,
+    "pressure": 1016,
+    "humidity": 40,
+    "sea_level": 1016,
+    "grnd_level": 1006
+  },
+  "visibility": 10000,
+  "wind": {
+    "speed": 4.12,
+    "deg": 10
+  },
+  "clouds": {
+    "all": 20
+  },
+  "dt": 1745459900,
+  "sys": {
+    "type": 2,
+    "id": 2002678,
+    "country": "US",
+    "sunrise": 1745413512,
+    "sunset": 1745464125
+  },
+  "timezone": -25200,
+  "id": 5785965,
+  "name": "Auburn",
+  "cod": 200
+}
