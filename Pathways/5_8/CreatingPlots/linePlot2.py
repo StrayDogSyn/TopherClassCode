@@ -5,16 +5,10 @@ import numpy as np
 x = np.linspace(0, 10, 100)
 y = np.sin(x)
 
-# Create and save a plot
-plt.figure(figsize=(10, 6))
-plt.plot(x, y)
-plt.title('Sine Wave')
-plt.xlabel('X-axis')
-plt.ylabel('Y-axis')
-plt.grid(True)
-
 # Create a more customized plot
 fig, ax = plt.subplots(figsize=(12, 7))
+print(fig)
+print(ax)
 
 # Custom line style, color, and markers
 ax.plot(x, y, linestyle='--', color='blue', linewidth=2, marker='o', 

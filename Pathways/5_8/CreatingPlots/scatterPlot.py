@@ -24,7 +24,6 @@ cbar.set_label('Temperature (°C)', fontsize=12)
 ax.grid(True, linestyle='--', alpha=0.7)
 
 plt.savefig('my_plot.png')  # This saves the plot as an image
-fig.savefig('my_plot2.png')
 plt.close()  # Clean up
 
 print("Plot saved as 'my_plot.png'")
