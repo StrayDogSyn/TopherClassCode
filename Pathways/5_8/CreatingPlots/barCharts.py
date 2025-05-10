@@ -9,6 +9,10 @@ rainfall = [30, 25, 50, 40, 60, 70, 90, 85, 70, 60, 50, 35]
 # Create a bar chart
 fig, ax = plt.subplots(figsize=(12, 6))
 bars = ax.bar(months, rainfall, color='skyblue', edgecolor='navy')
+# print(ax.__dict__)
+# print(dir(ax))
+# print(fig.__dict__)
+print(dir(fig))
 
 # Customize the plot
 ax.set_title('Monthly Rainfall', fontsize=14)

@@ -67,10 +67,14 @@ for col in ['color', 'size', 'country', 'rating']:
 # Good for binary categories or ordinal categories
 label_encoder = LabelEncoder()
 df['color_label'] = label_encoder.fit_transform(df['color'])
-df['rating_label'] = label_encoder.fit_transform(df['rating'])  # Note: this resets the encoder
-
 print("\n1. Label Encoding Results:")
 print("Color mapping:", dict(zip(label_encoder.classes_, range(len(label_encoder.classes_)))))
+
+# Reset label encoder for rating to get new mapping
+rating_encoder = LabelEncoder()
+df['rating_label'] = rating_encoder.fit_transform(df['rating'])
+print("Rating mapping:", dict(zip(rating_encoder.classes_, range(len(rating_encoder.classes_)))))
+
 # For properly ordered ordinal encoding, we need OrdinalEncoder with specified categories
 ordinal_encoder = OrdinalEncoder(categories=[ordered_ratings])
 df['rating_ordinal'] = ordinal_encoder.fit_transform(df[['rating']])
@@ -79,10 +83,10 @@ df['rating_ordinal'] = ordinal_encoder.fit_transform(df[['rating']])
 # Good for nominal categories with few levels
 one_hot_encoder = OneHotEncoder(sparse_output=False, drop='first')
 color_one_hot = one_hot_encoder.fit_transform(df[['color']])
-color_one_hot_df = pd.DataFrame(
-    color_one_hot, 
-    columns=[f'color_{c}' for c in one_hot_encoder.categories_[0][1:]]
-)
+
+# Get the actual feature names from the encoder
+one_hot_feature_names = one_hot_encoder.get_feature_names_out(['color'])
+color_one_hot_df = pd.DataFrame(color_one_hot, columns=one_hot_feature_names)
 
 # Using Pandas get_dummies for one-hot (often simpler)
 size_one_hot_df = pd.get_dummies(df['size'], prefix='size', drop_first=True)
@@ -91,8 +95,9 @@ size_one_hot_df = pd.get_dummies(df['size'], prefix='size', drop_first=True)
 df = pd.concat([df, color_one_hot_df, size_one_hot_df], axis=1)
 
 print("\n2. One-Hot Encoding Results:")
+print("One-hot feature names:", one_hot_feature_names)
 print("First few rows with color one-hot encoded:")
-print(df[['color', 'color_red', 'color_blue', 'color_green', 'color_yellow']].head())
+print(df[['color'] + list(one_hot_feature_names)].head())
 
 # 3. Binary Encoding
 # Efficient for high-cardinality nominal features
@@ -136,7 +141,7 @@ axes[0, 1].set_xlabel('Encoded Value')
 axes[0, 1].set_ylabel('Count')
 
 # One-hot encoded (visualized differently)
-one_hot_sum = df[['color_red', 'color_blue', 'color_green', 'color_yellow']].sum()
+one_hot_sum = df[one_hot_feature_names].sum()
 axes[1, 0].bar(one_hot_sum.index, one_hot_sum.values)
 axes[1, 0].set_title('One-Hot Encoded Colors (Sum of Each Column)')
 axes[1, 0].set_ylabel('Count')

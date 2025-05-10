@@ -76,7 +76,7 @@ print()
 print("Time series statistics:")
 print("-" * 40)
 print("Monthly average temperatures:")
-monthly_temps = weather_df['temperature'].resample('M').mean()
+monthly_temps = weather_df['temperature'].resample('ME').mean()
 print(monthly_temps)
 print()
 
@@ -119,8 +119,8 @@ print()
 print("Creating comparative time series visualization...")
 plt.figure(figsize=(12, 6))
 
-# Create monthly averages
-monthly_avg = weather_df.resample('M').mean()
+# Create monthly averages - use only numeric columns and updated 'ME' frequency
+monthly_avg = weather_df[['temperature', 'precipitation']].resample('ME').mean()
 
 # Plot temperature
 plt.subplot(2, 1, 1)

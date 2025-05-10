@@ -87,14 +87,16 @@ for temp in city_b_temps:
 data['Season'] = seasons
 
 # Plot 5: Distribution by city and season
-plt.figure(figsize=(14, 8))
-sns.histplot(data=data, x='Temperature (°C)', hue='Season', col='City',
-             multiple='stack',  # Stack the distributions
-             palette='viridis',  # Use a colorful palette
-             bins=20)
+fg = sns.FacetGrid(data=data, col='City', height=4, aspect=1.5)
+fg.map_dataframe(sns.histplot, x='Temperature (°C)', 
+                 hue='Season',
+                 multiple='stack',  # Stack the distributions
+                 palette='viridis',  # Use a colorful palette
+                 bins=20)
+fg.add_legend()
 plt.suptitle('Temperature Distributions by City and Season', y=1.02, fontsize=16)
 plt.tight_layout()
-plt.savefig('plot.png')
+plt.show()
 
 # Key takeaways:
 # - Seaborn makes creating beautiful, informative histograms simpler
