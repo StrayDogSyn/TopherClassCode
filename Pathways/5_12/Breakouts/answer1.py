@@ -29,7 +29,8 @@ for city, temps in city_temps.items():
     city_means[city] = np.mean(temps)
     city_medians[city] = np.median(temps)
     mode_result = stats.mode(temps)
-    city_modes[city] = mode_result.mode[0]
+    # city_modes[city] = mode_result.mode[0]
+    city_modes[city] = mode_result[0]
 
 # Create a table to compare measures across cities
 comparison_df = pd.DataFrame({
