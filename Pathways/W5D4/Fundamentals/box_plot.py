@@ -7,7 +7,6 @@ import numpy as np
 
 # Set a random seed for reproducibility
 np.random.seed(42)
-
 # Generate three datasets with different variances
 # We'll create data with low, medium, and high variance
 low_variance = np.random.normal(0, 1, 100)    # Standard deviation = 1

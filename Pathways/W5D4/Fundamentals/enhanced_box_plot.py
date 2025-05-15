@@ -9,7 +9,6 @@ import pandas as pd
 
 # Set a random seed for reproducibility
 np.random.seed(42)
-
 # Create a DataFrame with our data
 # DataFrames make it easier to work with labeled data
 df = pd.DataFrame({
@@ -17,10 +16,11 @@ df = pd.DataFrame({
     'Medium Variance': np.random.normal(0, 2, 100),
     'High Variance': np.random.normal(0, 3, 100)
 })
-
 # Show the first few rows of our DataFrame
 print("First 5 rows of our DataFrame:")
 print(df.head())
+
+
 
 # We need to reshape our DataFrame for Seaborn
 # This converts from "wide format" to "long format"
