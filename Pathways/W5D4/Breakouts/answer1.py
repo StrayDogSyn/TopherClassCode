@@ -15,11 +15,11 @@ plt.ylabel('Temperature (°C)')
 plt.grid(True, linestyle='--', alpha=0.7)
 plt.suptitle('')  # Remove the automatic title
 plt.tight_layout()
-plt.show()
+# plt.show()
 
 # Solution 2: Enhanced box plot with Seaborn
 plt.figure(figsize=(12, 6))
-sns.boxplot(x='season', y='temperature', data=temperatures, 
+sns.boxplot(x='season', y='temperature', data=data,
             palette="coolwarm")  # Use a color palette to show temperature differences
 plt.xlabel('Season')
 plt.ylabel('Temperature (°C)')
