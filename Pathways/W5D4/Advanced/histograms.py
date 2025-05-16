@@ -27,6 +27,7 @@ plt.figure(figsize=(10, 6))
 # edgecolor: color of the edges of the bars
 # alpha: transparency of the bars
 plt.hist(heights, bins=15, edgecolor='black', alpha=0.7)
+# plt.hist(heights, edgecolor='black', alpha=0.7)
 
 # Add labels and title
 plt.xlabel('Height (cm)')
@@ -38,10 +39,3 @@ plt.grid(True, linestyle='--', alpha=0.7)
 
 # Display the plot
 plt.savefig('plot.png')
-
-# Key concepts:
-# - Histograms group continuous data into bins
-# - The height of each bar shows the frequency (count) of values in that bin
-# - The overall shape shows the distribution pattern
-# - Normal distributions have a characteristic "bell curve" shape
-# - Histograms help visualize central tendency, spread, and shape
