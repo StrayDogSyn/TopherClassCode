@@ -12,7 +12,6 @@ np.random.seed(42)
 scores_group1 = np.random.normal(70, 10, 70)   # 70 students scoring around 70%
 scores_group2 = np.random.normal(85, 5, 30)    # 30 students scoring around 85%
 scores = np.concatenate([scores_group1, scores_group2])
-
 # Clip scores to be between 0 and 100
 scores = np.clip(scores, 0, 100)
 
