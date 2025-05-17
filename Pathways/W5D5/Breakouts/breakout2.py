@@ -74,7 +74,7 @@ seasonal_stats = weather_data.groupby('season').agg({
     'precipitation': ['mean', 'sum', 'max'],
     'humidity': ['mean'],
     'wind_speed': ['mean', 'max']
-})
+}).round(2).T
 
 print("\nSeasonal weather statistics:")
 print(seasonal_stats)
@@ -239,3 +239,106 @@ sns.heatmap(monthly_temp_pivot, cmap='coolwarm', annot=True, fmt='.1f',
 plt.title('Monthly Average Temperature Heatmap')
 plt.tight_layout()
 plt.savefig('temperature_heatmap.png')
+
+# -----------------------------------------------------------------------------
+# Exercise 6: Lollipop Chart Visualization with Pastel Gradients
+# -----------------------------------------------------------------------------
+# Discussion point: How do lollipop charts combine the clarity of bar charts with the elegance of scatter plots?
+
+# Create a monthly temperature range lollipop chart with pastel gradient
+plt.figure(figsize=(14, 8))
+
+# Calculate min and max temperatures for each month across all years
+monthly_temp_min = weather_data.groupby(weather_data.index.month)['temperature'].min()
+monthly_temp_max = weather_data.groupby(weather_data.index.month)['temperature'].max()
+monthly_temp_mean = weather_data.groupby(weather_data.index.month)['temperature'].mean()
+
+# Print available month indices for debugging
+print("Available months in the data:")
+print("Min temp months:", monthly_temp_min.index.tolist())
+print("Max temp months:", monthly_temp_max.index.tolist())
+print("Mean temp months:", monthly_temp_mean.index.tolist())
+
+# Set up x-axis positions
+months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+x = np.arange(1, 13)
+
+# Create pastel color gradient
+pastel_colors = plt.cm.Pastel1(np.linspace(0, 1, 12))
+
+# Create arrays to store values for each month (initialize with NaN)
+min_temps = np.full(12, np.nan)
+max_temps = np.full(12, np.nan)
+mean_temps = np.full(12, np.nan)
+
+# Fill in the arrays for available months
+for month in monthly_temp_min.index:
+    if 1 <= month <= 12:  # Ensure the month index is valid
+        min_temps[month-1] = monthly_temp_min[month]
+        max_temps[month-1] = monthly_temp_max[month]
+        mean_temps[month-1] = monthly_temp_mean[month]
+
+# Plot the stems (lines)
+for i in range(len(x)):
+    # Only plot if we have data for this month
+    if not np.isnan(min_temps[i]) and not np.isnan(max_temps[i]):
+        plt.plot([x[i], x[i]], [min_temps[i], max_temps[i]], 
+                color=pastel_colors[i], 
+                linewidth=2.5,
+                alpha=0.7)
+
+# Filter out months with no data
+valid_months = ~np.isnan(min_temps)
+x_valid = x[valid_months]
+min_valid = min_temps[valid_months]
+max_valid = max_temps[valid_months]
+mean_valid = mean_temps[valid_months]
+colors_valid = pastel_colors[valid_months]
+
+# Plot the min temperature circles
+plt.scatter(x_valid, min_valid, 
+            s=120, 
+            color=colors_valid,
+            edgecolor='white', 
+            linewidth=1.5, 
+            zorder=3, 
+            label='Min Temp')
+
+# Plot the max temperature circles
+plt.scatter(x_valid, max_valid, 
+            s=120, 
+            color=colors_valid,
+            edgecolor='white', 
+            linewidth=1.5, 
+            zorder=3, 
+            label='Max Temp')
+
+# Plot the mean temperature as diamonds
+plt.scatter(x_valid, mean_valid, 
+            s=100, 
+            color='white',
+            edgecolor=colors_valid, 
+            linewidth=1.5, 
+            zorder=4, 
+            marker='D', 
+            label='Mean Temp')
+
+# Customize the plot
+plt.grid(axis='y', linestyle='--', alpha=0.7)
+plt.xticks(x, months)
+plt.title('Monthly Temperature Ranges (Lollipop Chart)', fontsize=16)
+plt.xlabel('Month', fontsize=14)
+plt.ylabel('Temperature (°C)', fontsize=14)
+plt.legend()
+
+# Add a subtle background gradient
+gradient = np.linspace(0, 1, 100).reshape(-1, 1)
+# Calculate min and max temps, filtering out NaN values
+valid_min = np.nanmin(min_temps)
+valid_max = np.nanmax(max_temps)
+plt.imshow(gradient, aspect='auto', extent=[0, 13, valid_min-3, valid_max+3], 
+           cmap='Pastel2_r', alpha=0.15, zorder=0)
+
+plt.tight_layout()
+plt.savefig('temperature_lollipop.png')
+plt.show()
