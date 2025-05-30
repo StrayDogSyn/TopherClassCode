@@ -159,3 +159,38 @@ FROM weather_readings wr
 WHERE wr.precipitation > 5
 GROUP BY l.city, l.state
 ORDER BY rainy_days DESC, avg_rainfall_on_rainy_days DESC;
+
+
+-- Additional Challenge: Weather Trends Over Time
+.print "\n--- CHALLENGE 5: Weather Trends Over Time ---"
+SELECT 
+    strftime('%Y-%m', wr.reading_date) as month,
+    l.city,
+    l.state,
+    ROUND(AVG(wr.temperature), 2) as avg_temperature,
+    ROUND(AVG(wr.humidity), 2) as avg_humidity,
+    ROUND(SUM(wr.precipitation), 2) as total_precipitation
+FROM weather_readings wr
+    INNER JOIN weather_stations ws ON wr.station_id = ws.station_id
+    INNER JOIN locations l ON ws.location_id = l.location_id
+WHERE wr.reading_date >= '2023-01-01' AND wr.reading_date < '2024-01-01'
+GROUP BY month, l.city, l.state
+ORDER BY month, l.city;
+
+-- Add additional data for more comprehensive trends
+INSERT OR IGNORE INTO weather_readings (station_id, temperature, humidity, pressure, precipitation, reading_date)
+VALUES
+(5, 30.0, 80.0, 1011.0, 0.0, '2023-07-01'),
+(5, 29.5, 82.0, 1010.5, 15.0, '2023-07-02'),
+(6, 20.0, 65.0, 1013.0, 3.0, '2023-07-01'),
+(6, 19.5, 70.0, 1012.5, 4.5, '2023-07-02');
+-- Final check to ensure all data is inserted correctly
+.print "\n--- Final Data Check ---"
+.print "\nLocations:"
+SELECT * FROM locations;
+
+-- Add additional cities and weather stations if needed
+.print "\nWeather Stations:"
+SELECT * FROM weather_stations;
+.print "\nWeather Readings:"
+SELECT * FROM weather_readings ORDER BY reading_date DESC LIMIT 10;
