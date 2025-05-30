@@ -8,6 +8,7 @@ Features:
 - Form validation and user feedback
 - Elegant typography and color scheme
 - Professional layout using grid system
+- Scrollable interface to handle overflow
 """
 
 import tkinter as tk
@@ -23,7 +24,8 @@ class ModernRegistrationForm:
         self.setup_styles()
         self.create_widgets()
         self.setup_layout()
-          def setup_window(self):
+        
+    def setup_window(self):
         """Configure the main window with modern styling"""
         self.root.title("Student Registration Form")
         self.root.geometry("700x850")  # Increased size to handle content overflow
@@ -99,9 +101,24 @@ class ModernRegistrationForm:
             pady=20
         )
         
-        # Form container
-        self.form_frame = tk.Frame(
+        # Form container with scrollable capability
+        self.canvas = tk.Canvas(
             self.main_frame,
+            bg="#ffffff",
+            highlightthickness=0
+        )
+        
+        self.scrollbar = ttk.Scrollbar(
+            self.main_frame,
+            orient="vertical",
+            command=self.canvas.yview
+        )
+        
+        self.canvas.configure(yscrollcommand=self.scrollbar.set)
+        
+        # Scrollable frame for form content
+        self.form_frame = tk.Frame(
+            self.canvas,
             bg="#ffffff",
             padx=40,
             pady=30
@@ -129,7 +146,7 @@ class ModernRegistrationForm:
         self.name_entry = ttk.Entry(
             self.form_frame,
             style="Modern.TEntry",
-            width=40
+            width=50
         )
         
         # Email field
@@ -144,7 +161,7 @@ class ModernRegistrationForm:
         self.email_entry = ttk.Entry(
             self.form_frame,
             style="Modern.TEntry",
-            width=40
+            width=50
         )
         
         # Phone field
@@ -159,7 +176,7 @@ class ModernRegistrationForm:
         self.phone_entry = ttk.Entry(
             self.form_frame,
             style="Modern.TEntry",
-            width=40
+            width=50
         )
         
         # Academic Information Section
@@ -186,7 +203,7 @@ class ModernRegistrationForm:
             self.form_frame,
             textvariable=self.program_var,
             style="Modern.TCombobox",
-            width=37,
+            width=47,
             state="readonly"
         )
         self.program_combo['values'] = (
@@ -325,17 +342,21 @@ class ModernRegistrationForm:
         )
         
     def setup_layout(self):
-        """Arrange widgets using grid layout for responsive design"""
+        """Arrange widgets using grid layout for responsive design with scrolling"""
         
-        # Main frame layout
-        self.main_frame.pack(fill="both", expand=True, padx=20, pady=20)
+        # Main frame layout with improved spacing
+        self.main_frame.pack(fill="both", expand=True, padx=15, pady=15)
         
         # Header layout
         self.header_frame.pack(fill="x", padx=0, pady=(0, 0))
         self.title_label.pack()
         
-        # Form layout
-        self.form_frame.pack(fill="both", expand=True)
+        # Canvas and scrollbar layout
+        self.canvas.pack(side="left", fill="both", expand=True)
+        self.scrollbar.pack(side="right", fill="y")
+        
+        # Create window in canvas for scrollable frame
+        self.canvas_frame = self.canvas.create_window((0, 0), window=self.form_frame, anchor="nw")
         
         row = 0
         
@@ -376,7 +397,7 @@ class ModernRegistrationForm:
         row += 1
         self.year_frame.grid(row=row, column=0, columnspan=2, sticky="ew", pady=(0, 20))
         
-        # Layout radio buttons horizontally
+        # Layout radio buttons horizontally with wrapping for smaller screens
         for i, rb in enumerate(self.year_buttons):
             rb.grid(row=0, column=i, padx=(0, 15), sticky="w")
         row += 1
@@ -399,10 +420,29 @@ class ModernRegistrationForm:
         row += 1
         
         # Status label
-        self.status_label.grid(row=row, column=0, columnspan=2, pady=(10, 0))
+        self.status_label.grid(row=row, column=0, columnspan=2, pady=(10, 20))
         
         # Configure grid weights for responsiveness
         self.form_frame.columnconfigure(0, weight=1)
+        
+        # Update scroll region when frame changes
+        self.form_frame.bind(
+            "<Configure>",
+            lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all"))
+        )
+        
+        # Bind canvas resize to update frame width
+        self.canvas.bind(
+            "<Configure>",
+            lambda e: self.canvas.itemconfig(self.canvas_frame, width=e.width)
+        )
+        
+        # Bind mousewheel scrolling
+        self.canvas.bind_all("<MouseWheel>", self._on_mousewheel)
+        
+    def _on_mousewheel(self, event):
+        """Handle mouse wheel scrolling"""
+        self.canvas.yview_scroll(int(-1*(event.delta/120)), "units")
         
     def validate_form(self):
         """Validate form fields and return validation status"""
@@ -464,7 +504,6 @@ class ModernRegistrationForm:
     def save_registration(self, data):
         """Save registration data to a file (demonstration)"""
         try:
-            import os
             filename = "registrations.txt"
             with open(filename, "a", encoding="utf-8") as f:
                 f.write(f"\n--- Registration: {data['Submission Time']} ---\n")
@@ -499,10 +538,6 @@ class ModernRegistrationForm:
         
     def run(self):
         """Start the application"""
-        # Add some sample data for demonstration (remove in production)
-        self.name_entry.insert(0, "")
-        self.email_entry.insert(0, "")
-        
         # Start the main event loop
         self.root.mainloop()
 
