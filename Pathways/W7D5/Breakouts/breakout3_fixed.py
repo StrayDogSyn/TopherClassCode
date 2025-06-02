@@ -1,8 +1,7 @@
 '''
 Rock, Paper, Scissors, Spock, Lizard Game
 A modern tkinter application with responsive layout and interactive gameplay.
-Features: First to 10 wins game mode, Leaderboard, Menu bar, Status bar, and comprehensive game logic.
-
+Features: Timer, Leaderboard, Menu bar, Status bar, and comprehensive game logic.
 '''
 
 import tkinter as tk
@@ -16,16 +15,16 @@ class RockPaperScissorsGame:
     def __init__(self):
         self.root = tk.Tk()
         self.root.title("Rock, Paper, Scissors, Spock, Lizard")
-        self.root.geometry("750x650")
+        self.root.geometry("900x750")
         self.root.minsize(700, 600)
         
         # Game state
         self.player_score = 0
         self.computer_score = 0
         self.ties = 0
-        self.game_active = True
-        self.wins_to_win = 10
-        self.game_over = False
+        self.game_active = False
+        self.timer_running = False
+        self.time_left = 30
         self.player_name = "Player"
         
         # Game choices and rules
@@ -102,32 +101,31 @@ class RockPaperScissorsGame:
                        background=bg_color,
                        foreground=secondary_color,
                        font=("Segoe UI", 11, "bold"))
-          # Choice buttons with modern hover effects, box shadows, and rounded edges
+        
+        # Choice buttons with modern hover effects
         style.configure("Choice.TButton",
                        padding=(15, 15),
                        font=("Segoe UI", 10, "bold"),
                        focuscolor="none",
-                       borderwidth=0,
-                       relief="flat",
-                       borderradius=15)
+                       borderwidth=2,
+                       relief="solid")
         
         style.map("Choice.TButton",
-                 background=[('active', primary_color), ('pressed', '#2980b9'), ('!active', '#ffffff')],
+                 background=[('active', primary_color), ('pressed', '#2980b9'), ('!active', '#ecf0f1')],
                  foreground=[('active', 'white'), ('pressed', 'white'), ('!active', secondary_color)],
-                 relief=[('active', 'raised'), ('pressed', 'sunken'), ('!active', 'raised')])
-          # Action buttons with box shadows and rounded edges
+                 bordercolor=[('active', primary_color), ('pressed', '#2980b9'), ('!active', '#bdc3c7')])
+        
+        # Action buttons
         style.configure("Action.TButton",
-                       padding=(12, 8),
+                       padding=(10, 6),
                        font=("Segoe UI", 9, "bold"),
                        focuscolor="none",
-                       borderwidth=0,
-                       relief="flat",
-                       borderradius=10)
+                       borderwidth=1,
+                       relief="solid")
         
         style.map("Action.TButton",
-                 background=[('active', accent_color), ('pressed', '#8e44ad'), ('!active', '#ffffff')],
-                 foreground=[('active', 'white'), ('pressed', 'white'), ('!active', secondary_color)],
-                 relief=[('active', 'raised'), ('pressed', 'sunken'), ('!active', 'raised')])
+                 background=[('active', accent_color), ('pressed', '#8e44ad'), ('!active', '#ecf0f1')],
+                 foreground=[('active', 'white'), ('pressed', 'white'), ('!active', secondary_color)])
         
         # Label styles with modern typography
         style.configure("Title.TLabel",
@@ -228,9 +226,9 @@ class RockPaperScissorsGame:
         info_frame = ttk.Frame(header_frame, style="Main.TFrame")
         info_frame.grid(row=1, column=0, columnspan=3, sticky="ew", pady=(0, 10))
         
-        # Game progress - first to 10 wins
-        self.progress_label = ttk.Label(info_frame, text="🎯 First to 10 Wins!", style="Timer.TLabel")
-        self.progress_label.grid(row=0, column=0, sticky="w")
+        # Timer
+        self.timer_label = ttk.Label(info_frame, text="⏰ Ready", style="Timer.TLabel")
+        self.timer_label.grid(row=0, column=0, sticky="w")
         
         # Player name
         self.player_label = ttk.Label(info_frame, text=f"👤 {self.player_name}", 
@@ -250,49 +248,18 @@ class RockPaperScissorsGame:
         game_frame = ttk.LabelFrame(parent, text="🎲 Make Your Choice", 
                                    padding=25, style="Card.TLabelframe")
         game_frame.grid(row=1, column=0, columnspan=2, sticky="ew", pady=(0, 20))
-          # Choice buttons with improved responsive layout and shadow effects
+        
+        # Choice buttons with improved responsive layout
         choice_frame = ttk.Frame(game_frame, style="Main.TFrame")
         choice_frame.grid(row=0, column=0, columnspan=3, pady=(0, 30), sticky="ew")
         
         self.choice_buttons = {}
         for i, choice in enumerate(self.choices):
-            # Create shadow frame for box shadow effect
-            shadow_frame = tk.Frame(choice_frame, bg="#d0d0d0", relief="flat", bd=0)
-            shadow_frame.grid(row=0, column=i, padx=8, pady=10, sticky="ew")
-            
-            # Create button container for rounded appearance
-            btn_container = tk.Frame(shadow_frame, bg="#ffffff", relief="raised", bd=2, 
-                                   highlightthickness=0)
-            btn_container.pack(padx=3, pady=3, fill="both", expand=True)
-            
-            # Create the actual button
-            btn = tk.Button(btn_container,
+            btn = ttk.Button(choice_frame, 
                            text=f"{self.choice_emojis[choice]}\n{choice}",
-                           font=("Segoe UI", 10, "bold"),
-                           bg="#ffffff",
-                           fg="#2c3e50",
-                           activebackground="#3498db",
-                           activeforeground="white",
-                           relief="flat",
-                           bd=0,
-                           cursor="hand2",
-                           padx=15,
-                           pady=15,
+                           style="Choice.TButton",
                            command=lambda c=choice: self.make_choice(c))
-            btn.pack(fill="both", expand=True)
-            
-            # Add hover effects
-            def on_enter(event, button=btn, container=btn_container):
-                button.config(bg="#3498db", fg="white")
-                container.config(bg="#3498db")
-                
-            def on_leave(event, button=btn, container=btn_container):
-                button.config(bg="#ffffff", fg="#2c3e50")
-                container.config(bg="#ffffff")
-                
-            btn.bind("<Enter>", on_enter)
-            btn.bind("<Leave>", on_leave)
-            
+            btn.grid(row=0, column=i, padx=8, pady=10, sticky="ew")
             self.choice_buttons[choice] = btn
             choice_frame.columnconfigure(i, weight=1)
         
@@ -316,7 +283,8 @@ class RockPaperScissorsGame:
         
         battle_frame.columnconfigure(0, weight=1)
         battle_frame.columnconfigure(2, weight=1)
-          # Result announcement
+        
+        # Result announcement
         self.result_label = ttk.Label(game_frame, text="", style="Result.TLabel")
         self.result_label.grid(row=2, column=0, columnspan=3, pady=20)
         
@@ -345,7 +313,7 @@ class RockPaperScissorsGame:
         scores_container.columnconfigure(1, weight=1)
         
     def create_control_buttons(self, parent):
-        """Create control buttons with shadow effects"""
+        """Create control buttons"""
         control_frame = ttk.Frame(parent, style="Main.TFrame")
         control_frame.grid(row=3, column=0, columnspan=2, sticky="ew", pady=(0, 15))
         
@@ -353,63 +321,27 @@ class RockPaperScissorsGame:
         left_frame = ttk.Frame(control_frame, style="Main.TFrame")
         left_frame.grid(row=0, column=0, sticky="w")
         
-        # Create styled buttons with shadow effects
-        self.new_game_btn = self.create_shadow_button(left_frame, "🎮 New Game", self.new_game)
+        self.new_game_btn = ttk.Button(left_frame, text="🎮 New Game", 
+                                      style="Action.TButton", command=self.new_game)
         self.new_game_btn.grid(row=0, column=0, padx=(0, 8))
         
-        self.help_btn = self.create_shadow_button(left_frame, "❓ Help", self.show_instructions)
+        self.help_btn = ttk.Button(left_frame, text="❓ Help", 
+                                  style="Action.TButton", command=self.show_instructions)
         self.help_btn.grid(row=0, column=1, padx=8)
         
         # Right side buttons
         right_frame = ttk.Frame(control_frame, style="Main.TFrame")
         right_frame.grid(row=0, column=2, sticky="e")
         
-        self.leaderboard_btn = self.create_shadow_button(right_frame, "🏆 Leaderboard", self.show_leaderboard)
+        self.leaderboard_btn = ttk.Button(right_frame, text="🏆 Leaderboard", 
+                                         style="Action.TButton", command=self.show_leaderboard)
         self.leaderboard_btn.grid(row=0, column=0, padx=8)
         
-        self.quit_btn = self.create_shadow_button(right_frame, "🚪 Quit", self.quit_game)
+        self.quit_btn = ttk.Button(right_frame, text="🚪 Quit", 
+                                  style="Action.TButton", command=self.quit_game)
         self.quit_btn.grid(row=0, column=1, padx=(8, 0))
         
         control_frame.columnconfigure(1, weight=1)
-    
-    def create_shadow_button(self, parent, text, command):
-        """Create a button with shadow effect and rounded appearance"""
-        # Create shadow frame
-        shadow_frame = tk.Frame(parent, bg="#d0d0d0", relief="flat", bd=0)
-        
-        # Create button container for rounded appearance
-        btn_container = tk.Frame(shadow_frame, bg="#ffffff", relief="raised", bd=1, 
-                               highlightthickness=0)
-        btn_container.pack(padx=2, pady=2, fill="both", expand=True)
-        
-        # Create the actual button
-        btn = tk.Button(btn_container,
-                       text=text,
-                       font=("Segoe UI", 9, "bold"),
-                       bg="#ffffff",
-                       fg="#2c3e50",
-                       activebackground="#9b59b6",
-                       activeforeground="white",
-                       relief="flat",
-                       bd=0,
-                       cursor="hand2",
-                       padx=12,
-                       pady=8,
-                       command=command)
-        btn.pack(fill="both", expand=True)
-          # Add hover effects
-        def on_enter(event):
-            btn.config(bg="#9b59b6", fg="white")
-            btn_container.config(bg="#9b59b6")
-            
-        def on_leave(event):
-            btn.config(bg="#ffffff", fg="#2c3e50")
-            btn_container.config(bg="#ffffff")
-            
-        btn.bind("<Enter>", on_enter)
-        btn.bind("<Leave>", on_leave)
-        
-        return shadow_frame
         
     def create_status_bar(self):
         """Create the status bar at the bottom"""
@@ -424,8 +356,11 @@ class RockPaperScissorsGame:
         
     def make_choice(self, player_choice):
         """Handle player's choice and play a round"""
-        if self.game_over:
+        if self.timer_running:
             return
+            
+        # Start timer for this round
+        self.start_timer()
         
         # Disable choice buttons during round
         for btn in self.choice_buttons.values():
@@ -457,23 +392,8 @@ class RockPaperScissorsGame:
         
         self.update_score_display()
         
-        # Check for game over condition
-        if self.player_score >= self.wins_to_win:
-            self.game_over = True
-            self.result_label.config(text="🏆 YOU WIN THE GAME! 🏆")
-            self.update_status(f"🏆 Congratulations! You won {self.wins_to_win} rounds first!")
-            messagebox.showinfo("Game Over!", f"🎉 Congratulations {self.player_name}!\n\nYou won the game by reaching {self.wins_to_win} wins first!\n\nFinal Score:\n{self.player_name}: {self.player_score}\nComputer: {self.computer_score}\nTies: {self.ties}")
-            return
-        elif self.computer_score >= self.wins_to_win:
-            self.game_over = True
-            self.result_label.config(text="😞 COMPUTER WINS THE GAME! 😞")
-            self.update_status(f"😞 Computer won {self.wins_to_win} rounds first! Better luck next time!")
-            messagebox.showinfo("Game Over!", f"😞 Game Over!\n\nThe computer won the game by reaching {self.wins_to_win} wins first.\n\nFinal Score:\n{self.player_name}: {self.player_score}\nComputer: {self.computer_score}\nTies: {self.ties}")
-            return
-        
-        # Re-enable buttons after delay (only if game isn't over)
-        if not self.game_over:
-            self.root.after(2000, self.enable_choice_buttons)
+        # Re-enable buttons after delay
+        self.root.after(3000, self.enable_choice_buttons)
         
     def determine_winner(self, player_choice, computer_choice):
         """Determine the winner of a round"""
@@ -484,10 +404,28 @@ class RockPaperScissorsGame:
         else:
             return "lose"
     
+    def start_timer(self):
+        """Start the 30-second timer for a round"""
+        self.timer_running = True
+        self.time_left = 30
+        self.update_timer()
+        
+    def update_timer(self):
+        """Update the timer display"""
+        if self.timer_running and self.time_left > 0:
+            self.timer_label.config(text=f"⏰ Time: {self.time_left}s")
+            self.time_left -= 1
+            self.root.after(1000, self.update_timer)
+        else:
+            self.timer_running = False
+            self.timer_label.config(text="⏰ Ready")
+            self.enable_choice_buttons()
+    
     def enable_choice_buttons(self):
         """Re-enable choice buttons"""
         for btn in self.choice_buttons.values():
             btn.config(state="normal")
+        self.timer_running = False
         
     def update_score_display(self):
         """Update the score display"""
@@ -501,16 +439,16 @@ class RockPaperScissorsGame:
         if self.player_score > 0 or self.computer_score > 0 or self.ties > 0:
             self.save_to_leaderboard()
         
-        # Reset scores and game state
+        # Reset scores
         self.player_score = 0
         self.computer_score = 0
         self.ties = 0
-        self.game_over = False
         
         # Reset display
         self.player_choice_label.config(text="Your Choice:\n❓")
         self.computer_choice_label.config(text="Computer Choice:\n❓")
         self.result_label.config(text="")
+        self.timer_label.config(text="⏰ Ready")
         
         # Update displays
         self.update_score_display()
@@ -543,7 +481,7 @@ class RockPaperScissorsGame:
 1. Click on one of the five choice buttons
 2. The computer will make its choice
 3. The winner is determined by the rules above
-4. First to reach 10 wins takes the game!
+4. You have 30 seconds for each round
 5. Scores are tracked and saved to leaderboard
 
 🏆 Scoring:
@@ -624,19 +562,19 @@ Good luck and have fun! 🎉
         about_text = """
 🎮 Rock, Paper, Scissors, Spock, Lizard
 
-Version: 2.1
+Version: 2.0
 Created: 2025
 
 A modern implementation of the classic game
 with Spock and Lizard additions, featuring:
 
 ✨ Responsive GUI layout
-🎯 First to 10 wins game mode
+⏰ Timer functionality  
 🏆 Leaderboard system
 🎨 Modern styling with hover effects
 📋 Menu system
 📊 Real-time status updates
-🎮 Interactive gameplay
+🎯 Interactive gameplay
 
 Based on the Big Bang Theory variant
 of the classic Rock, Paper, Scissors game.

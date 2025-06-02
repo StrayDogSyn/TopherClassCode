@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Player",
+    "wins": 1,
+    "losses": 7,
+    "ties": 3,
+    "win_percentage": 9.090909090909092,
+    "date": "2025-05-30 20:12:17"
+  },
+  {
+    "name": "Player",
+    "wins": 1,
+    "losses": 0,
+    "ties": 0,
+    "win_percentage": 100.0,
+    "date": "2025-05-30 20:12:21"
+  },
+  {
+    "name": "Player",
+    "wins": 0,
+    "losses": 1,
+    "ties": 0,
+    "win_percentage": 0.0,
+    "date": "2025-05-30 20:12:26"
+  },
+  {
+    "name": "Hunter",
+    "wins": 10,
+    "losses": 9,
+    "ties": 6,
+    "win_percentage": 40.0,
+    "date": "2025-05-30 20:16:43"
+  },
+  {
+    "name": "Hunter",
+    "wins": 3,
+    "losses": 1,
+    "ties": 1,
+    "win_percentage": 60.0,
+    "date": "2025-05-30 21:21:01"
+  }
+]
