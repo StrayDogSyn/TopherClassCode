@@ -30,7 +30,7 @@ plt.rcParams['figure.figsize'] = (10, 6)  # Set default figure size
 
 # Load the CSV file using pandas
 # pd.read_csv() reads a CSV file and creates a DataFrame (like a spreadsheet in Python)
-weather_data = pd.read_csv(r'c:\Users\Petro\repos\python\TPS25\Pathways\W5D5\Breakouts\weather_data.csv')
+weather_data = pd.read_csv('weather_data.csv')
 
 # Print the first 5 rows to understand the data structure
 # .head() shows the first few rows of our dataset
